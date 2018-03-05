@@ -9,7 +9,40 @@ The format is loosely based on [Keep a Changelog](http://keepachangelog.com/en/1
 
 #### Added
 
+* Add `ISetupSequentialResult<TResult>.Returns` method overload that support delegate for deferred results (@snrnats, #594)
+
+#### Changed
+
+* **Breaking change:** All `ReturnsAsync` and `ThrowsAsync` setup methods now consistently return a new `Task` on each invocation (@snrnats, #595) 
+* Speed up `Mock.Of<T>()` by approx. one order of magnitude (@informatorius, #598)
+
+#### Fixed
+
+*  Usage of `ReturnsExtensions.ThrowsAsync()` can cause `UnobservedTaskException` (@snrnats, #595)
+*  `ReturnsAsync` and `ThrowsAsync` with delay parameter starts timer at setup (@snrnats, #595)
+
+
+## 4.8.2 (2018-02-23)
+
+#### Changed
+
+* Upgraded `System.ValueTuple` dependency to version 4.4.0 in order to reestablish Moq compatibility with .NET 4.7 (and later), which already include the `ValueTuple` types (@stakx, #591)
+
+#### Fixed
+
+* Wrong parameters count for extension methods in `Callback` and `Returns` (@Caraul, #575)
+* `CallBase` regression with members of additional interfaces (@stakx, #583)
+
+
+## 4.8.1 (2018-01-08)
+
+#### Added
+
 * C# 7 tuple support for `DefaultValue.Empty` and `DefaultValue.Mock` (@stakx, #563)
+
+#### Changed
+
+* Downgraded `System.Threading.Tasks.Extensions` and `System.ValueTuple` dependencies to versions 4.3.0 as suggested by @tothdavid in order to improve Moq compatibility with .NET 4.6.1 / help prevent `MissingMethodException` and similar (@stakx, #571)
 
 #### Fixed
 

@@ -1287,8 +1287,8 @@ namespace Moq.Tests.Regressions
 
 				public override int GetHashCode()
 				{
-					// This is legal: Equal objects must have equal hashcodes,
-					// but objects with equal hashcodes are not necessarily equal.
+					// This is legal: Equal objects must have equal hash codes,
+					// but objects with equal hash codes are not necessarily equal.
 					// We are essentially rendering GetHashCode useless for equality
 					// comparison, so whoever compares instances of this type will
 					// (or should!) end up using the more precise Equals.
@@ -1381,7 +1381,7 @@ namespace Moq.Tests.Regressions
 				// the default value returned for most reference types. However, this test
 				// becomes relevant once Moq starts supporting custom implementations of
 				// `IDefaultValueProvider`. Then it might no longer be a given that `null`
-				// is the default return value that noone would want to explicitly set up.
+				// is the default return value that no one would want to explicitly set up.
 				var userProvider = Mock.Of<IUserProvider>(p => p.GetUserByEmail("alice@example.com") == null);
 				var user = userProvider.GetUserByEmail("alice@example.com");
 				Assert.Null(user);
@@ -1805,6 +1805,102 @@ namespace Moq.Tests.Regressions
 				{
 					return new object();
 				}
+			}
+		}
+
+		#endregion
+
+		#region 582
+
+		public sealed class Issue582
+		{
+			public interface IFoo
+			{
+				void Method();
+			}
+
+			public class Bar
+			{
+			}
+
+			[Fact]
+			public void CallBase_has_no_effect_for_methods_of_additional_interfaces()
+			{
+				var bar = new Mock<Bar>() { CallBase = true };
+				var foo = bar.As<IFoo>().Object;
+
+				foo.Method();
+			}
+		}
+
+		#endregion
+
+		#region 592
+
+		public class Issue592 : IDisposable
+		{
+			private UnobservedTaskExceptionEventArgs _unobservedEventArgs;
+
+			public Issue592()
+			{
+				TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+			}
+
+			private void OnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+			{
+				_unobservedEventArgs = e;
+			}
+
+			[Fact]
+			public void ThrowsAsync_does_not_cause_UnobservedTaskException()
+			{
+				var mock = new Mock<IFoo>();
+				mock.Setup(a => a.Foo()).ThrowsAsync(new ArgumentException());
+				mock.SetupSequence(a => a.Boo()).ThrowsAsync(new ArgumentException());
+			}
+
+			public void Dispose()
+			{
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+				TaskScheduler.UnobservedTaskException -= OnUnobservedTaskException;
+				if (_unobservedEventArgs != null && !_unobservedEventArgs.Observed)
+				{
+					throw _unobservedEventArgs.Exception;
+				}
+			}
+
+			public interface IFoo
+			{
+				Task Foo();
+				Task<int> Boo();
+			}
+		}
+
+		#endregion
+
+		#region 593
+
+		public class Issue593
+		{
+			[Fact]
+			public async Task ReturnsAsync_ThrowsAsync_start_delay_timer_at_mock_invocation()
+			{
+				var mock = new Mock<IFoo>();
+				mock.Setup(a => a.Foo()).ThrowsAsync(new ArgumentException(), TimeSpan.FromMilliseconds(100));
+				mock.Setup(a => a.Boo()).ReturnsAsync(true, TimeSpan.FromMilliseconds(100));
+
+				//Wait for the delay greater then specified for Foo and Boo setup
+				await Task.Delay(200);
+
+				Assert.False(mock.Object.Foo().IsCompleted);
+				Assert.False(mock.Object.Boo().IsCompleted);
+			}
+
+			public interface IFoo
+			{
+				Task<bool> Foo();
+				Task<bool> Boo();
 			}
 		}
 
