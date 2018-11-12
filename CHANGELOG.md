@@ -7,19 +7,78 @@ The format is loosely based on [Keep a Changelog](http://keepachangelog.com/en/1
 
 ## Unreleased
 
+#### Fixed
+
+* `NullReferenceException` when using `SetupSet` on indexers with multiple parameters (@idigra, #694)
+* `CallBase` should not be allowed for delegate mocks (@tehmantra, #706)
+
+#### Changed
+
+* Dropped the dependency on the `System.ValueTuple` NuGet package, at no functional cost (i.e. value tuples are still supported just fine) (@stakx, #721)
+
+
+## 4.10.0 (2018-09-08)
+
+#### Added
+
+* `ExpressionCompiler`: An extensibility point for setting up alternate LINQ expression tree compilation strategies (@stakx, #647)
+* `setup.CallBase()` for `void` methods (@stakx, #664)
+* `VerifyNoOtherCalls` for `MockRepository` (@BlythMeister, #682)
+
+#### Changed
+
+* Make `VerifyNoOtherCalls` take into account previous calls to parameterless `Verify()` and `VerifyAll()` (@stakx, #659)
+* **Breaking change:** `VerifyAll` now succeeds after a call to `SetupAllProperties` even when not all property accessors were invoked (stakx, #684)
+
+#### Fixed
+
+* More precise `out` parameter detection for mocking COM interfaces with `[in,out]` parameters (@koutinho, #645)
+* Prevent false 'Different number of parameters' error with `Returns` callback methods that have been compiled from `Expression`s (@stakx, #654)
+* `Verify` exception should report configured setups for delegate mocks (@stakx, #679)
+* `Verify` exception should include complete call expression for delegate mocks (@stakx, #680)
+* Bug report #556: "Recursive setup expression creates ghost setups that make `VerifyAll` fail" (@stakx, #684)
+* Bug report #191: "Upgrade from 4.2.1409.1722 to 4.2.1507.0118 changed `VerifyAll` behavior" (@stakx, #684)
+
+
+## 4.9.0 (2018-07-13)
+
+#### Added
+
+* Add `Mock.Invocations` property to support inspection of invocations on a mock (@Tragedian, #560)
+
+#### Changed
+
+* Update package reference to `Castle.Core` (DynamicProxy) from version 4.3.0 to 4.3.1 (@stakx, #635)
+* Floating point values are formatted with higher precision (satisfying round-tripping) in diagnostic messages (@stakx, #637)
+
+#### Fixed
+
+* `CallBase` disregarded for some base methods from non-public interfaces (@stakx, #641)
+
+#### Obsoleted
+
+* `mock.ResetCalls()` has been deprecated in favor of `mock.Invocations.Clear()` (@stakx, #633)
+
+
+## 4.8.3 (2018-06-09)
+
 #### Added
 
 * Add `ISetupSequentialResult<TResult>.Returns` method overload that support delegate for deferred results (@snrnats, #594)
+* Support for C# 7.2's `in` parameter modifier (@stakx, #624, #625)
+* Missing methods `ReturnsAsync` and `ThrowsAsync` for sequential setups of methods returning a `ValueTask` (@stakx, #626) 
 
 #### Changed
 
 * **Breaking change:** All `ReturnsAsync` and `ThrowsAsync` setup methods now consistently return a new `Task` on each invocation (@snrnats, #595) 
 * Speed up `Mock.Of<T>()` by approx. one order of magnitude (@informatorius, #598)
+* Update package reference to `Castle.Core` (DynamicProxy) from version 4.2.1 to 4.3.0 (@stakx, #624)
 
 #### Fixed
 
 *  Usage of `ReturnsExtensions.ThrowsAsync()` can cause `UnobservedTaskException` (@snrnats, #595)
 *  `ReturnsAsync` and `ThrowsAsync` with delay parameter starts timer at setup (@snrnats, #595)
+*  `Returns` regression with null function callback (@Caraul, #602)
 
 
 ## 4.8.2 (2018-02-23)

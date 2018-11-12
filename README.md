@@ -6,6 +6,7 @@ The most popular and friendly mocking framework for .NET
 [![Version](https://img.shields.io/nuget/v/Moq.svg)](https://www.nuget.org/packages/Moq)
 [![Downloads](https://img.shields.io/nuget/dt/Moq.svg)](https://www.nuget.org/packages/Moq)
 [![Join the chat at https://gitter.im/moq/moq](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/moq/moq?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![CoreBuild Standard](https://img.shields.io/badge/√_corebuild-standard-blue.svg)](http://www.corebuild.io)
 
 
 ```csharp
@@ -88,8 +89,15 @@ Moq offers the following features:
 * Intercept and raise events on mocks
 * Intuitive support for ```out/ref``` arguments
 
-We appreciate deeply any [feedback](http://moq.uservoice.com/) that you may have!
+We appreciate deeply any feedback that you may have! Feel free to participate in the [chat], or report an issue in the [issue tracker].
 
 ![OhLoh](http://www.ohloh.net/p/moq/widgets/project_thin_badge.gif)
 
-![ClariusLabs](http://download.codeplex.com/Project/Download/FileDownload.aspx?ProjectName=clarius&DownloadId=17830&Build=14806&boo.png)
+
+ [chat]:
+ https://gitter.im/moq/moq
+ "Moq chat room on Gitter"
+
+ [issue tracker]:
+ https://github.com/moq/moq4/issues
+ "Moq issue tracker on GitHub"
